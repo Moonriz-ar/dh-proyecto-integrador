@@ -40,7 +40,7 @@ func ConnectDatabase() (err error) {
 	// create or sincronize book table with struct
 	// it is possible to sync more than one table
 	// example: err := engine.Sync(new(models.Book), new(models.Customer))
-	if err := engine.Sync2(new(models.Categories)); nil != err {
+	if err := engine.Sync2(new(models.Category)); nil != err {
 		fmt.Println("error with database schema synchronize")
 	}
 

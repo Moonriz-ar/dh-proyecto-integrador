@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// Categories is car product categories
-type Categories struct {
+// Category is car product categories
+type Category struct {
 	ID          int64     `json:"id"`
 	Title       string    `json:"title" xorm:"varchar(255) not null" binding:"required"`
 	Description string    `json:"description" xorm:"varchar(255) not null" binding:"required"`
@@ -15,6 +15,6 @@ type Categories struct {
 	DeletedAt   time.Time `json:"-" xorm:"deleted"` // soft delete, shows delete time instead of really deleting
 }
 
-func (c *Categories) TableName() string {
-	return "categories"
+func (c *Category) TableName() string {
+	return "category"
 }
