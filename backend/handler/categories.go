@@ -30,3 +30,17 @@ func AddCategory(c *gin.Context) {
 		"data": category,
 	})
 }
+
+func ListAll(c *gin.Context) {
+	categories := &[]models.Categories{}
+	// query db
+	if err := dao.ListAll(categories); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "success",
+		"data": categories,
+	})
+}

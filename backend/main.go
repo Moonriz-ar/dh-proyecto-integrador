@@ -34,6 +34,7 @@ func main() {
 	}
 
 	go func() {
+		log.Printf("starting server on port %s", srv.Addr)
 		// service connections
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)

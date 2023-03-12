@@ -19,5 +19,6 @@ var registerCategoriesRoutes = func(r *gin.Engine) {
 	categories := r.Group("/categories")
 	{
 		categories.POST("/", handler.AddCategory)
+		categories.GET("/", handler.ListAll)
 	}
 }
