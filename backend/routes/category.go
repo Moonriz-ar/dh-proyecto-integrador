@@ -21,5 +21,6 @@ var registerCategoryRoutes = func(r *gin.Engine) {
 		category.POST("/", handler.AddCategory)
 		category.GET("/", handler.ListAll)
 		category.GET("/:id", handler.GetCategoryByID)
+		category.PATCH("/:id", handler.UpdateCategoryByID)
 	}
 }

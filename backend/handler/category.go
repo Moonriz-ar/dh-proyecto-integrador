@@ -80,3 +80,40 @@ func GetCategoryByID(c *gin.Context) {
 		"data": category,
 	})
 }
+
+// UpdateCategoryByID handles PATCH requests updates a car product category by id
+func UpdateCategoryByID(c *gin.Context) {
+	category := new(models.Category)
+	// parse data from request body
+	if err := c.BindJSON(category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// parse path param id
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	// update in db
+	affected, err := dao.UpdateCategoryByID(id, category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if affected == -1 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("Record with id %v not found.", id),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "success",
+		"data": category,
+	})
+}
