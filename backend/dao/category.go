@@ -50,3 +50,17 @@ func UpdateCategoryByID(id int, c *models.Category) (int64, error) {
 	}
 	return affected, nil
 }
+
+// DeleteCategoryByID deletes a car product category by id
+func DeleteCategoryByID(id int, c *models.Category) (int64, error) {
+	affected, err := data.DB.ID(id).Delete(c)
+	if err != nil {
+		return -1, err
+	}
+	// affected == 0 means there is no category with that id
+	if affected == 0 {
+		return -1, nil
+	}
+	// affected == 1 means category with that id has been deleted
+	return affected, nil
+}

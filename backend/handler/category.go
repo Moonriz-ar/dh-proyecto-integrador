@@ -117,3 +117,35 @@ func UpdateCategoryByID(c *gin.Context) {
 		"data": category,
 	})
 }
+
+// DeleteCategoryByID handles DELETE requests updates a car product category by id
+func DeleteCategoryByID(c *gin.Context) {
+	category := new(models.Category)
+	// parse path param id
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	// query database
+	affected, err := dao.DeleteCategoryByID(id, category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if affected == -1 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("Record with id %v not found.", id),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "success",
+		"data": category,
+	})
+}
