@@ -29,6 +29,10 @@ func ConnectDatabase() (err error) {
 		fmt.Println("sql connection error")
 		return err
 	}
+	if err := engine.Ping(); nil != err {
+		fmt.Println("could not ping db")
+		return err
+	}
 	fmt.Println("sql connected successfully")
 
 	// set show SQL query in console
