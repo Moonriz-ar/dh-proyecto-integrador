@@ -143,9 +143,5 @@ func DeleteCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "success",
-		"data": category,
-	})
+	c.JSON(http.StatusNoContent, nil)
 }
