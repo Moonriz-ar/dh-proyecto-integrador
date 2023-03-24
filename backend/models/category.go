@@ -11,7 +11,7 @@ type Category struct {
 	Description string    `json:"description" xorm:"varchar(255) not null" binding:"required"`
 	ImageUrl    string    `json:"imageUrl" xorm:"varchar(255) not null" binding:"required"`
 	CreatedAt   time.Time `json:"createdAt" xorm:"created"`
-	Updated     time.Time `json:"-" xorm:"updated"`
+	UpdatedAt   time.Time `json:"-" xorm:"updated"`
 	DeletedAt   time.Time `json:"-" xorm:"deleted"` // soft delete, shows delete time instead of really deleting
 }
 
