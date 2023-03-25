@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"proyecto-integrador/data"
+	"proyecto-integrador/database"
 	"proyecto-integrador/routes"
 	"syscall"
 	"time"
@@ -15,11 +15,11 @@ import (
 
 func main() {
 	// connect to mysql database
-	if err := data.ConnectDatabase(); nil != err {
+	if err := database.ConnectDatabase(); nil != err {
 		fmt.Println(err)
 		return
 	}
-	defer data.DB.Close() // program exit close db connection
+	defer database.DB.Close() // program exit close db connection
 
 	// gin router
 	router := routes.SetupRouter()

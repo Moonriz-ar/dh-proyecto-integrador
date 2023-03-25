@@ -1,13 +1,13 @@
 package dao
 
 import (
-	"proyecto-integrador/data"
+	"proyecto-integrador/database"
 	"proyecto-integrador/models"
 )
 
 // AddCategory inserts a new car product category
 func AddCategory(c *models.Category) (int64, error) {
-	affected, err := data.DB.Insert(c)
+	affected, err := database.DB.Insert(c)
 	if err != nil {
 		return -1, err
 	}
@@ -16,7 +16,7 @@ func AddCategory(c *models.Category) (int64, error) {
 
 // ListAll queries all car product Category
 func ListAll(c *[]models.Category) error {
-	if err := data.DB.Find(c); err != nil {
+	if err := database.DB.Find(c); err != nil {
 		return err
 	}
 	return nil
@@ -24,7 +24,7 @@ func ListAll(c *[]models.Category) error {
 
 // GetCategoryByID queries a car product category by id
 func GetCategoryByID(id int, c *models.Category) (bool, error) {
-	isFound, err := data.DB.ID(id).Get(c)
+	isFound, err := database.DB.ID(id).Get(c)
 	if err != nil {
 		return false, err
 	}
@@ -36,7 +36,7 @@ func GetCategoryByID(id int, c *models.Category) (bool, error) {
 
 // UpdateCategoryByID updates a car product category by id
 func UpdateCategoryByID(id int, c *models.Category) (int64, error) {
-	affected, err := data.DB.ID(id).Update(c)
+	affected, err := database.DB.ID(id).Update(c)
 	if err != nil {
 		return -1, err
 	}
@@ -45,7 +45,7 @@ func UpdateCategoryByID(id int, c *models.Category) (int64, error) {
 		return -1, nil
 	}
 	// retrieve updated record
-	if _, err := data.DB.ID(id).Get(c); err != nil {
+	if _, err := database.DB.ID(id).Get(c); err != nil {
 		return affected, err
 	}
 	return affected, nil
@@ -53,7 +53,7 @@ func UpdateCategoryByID(id int, c *models.Category) (int64, error) {
 
 // DeleteCategoryByID deletes a car product category by id
 func DeleteCategoryByID(id int, c *models.Category) (int64, error) {
-	affected, err := data.DB.ID(id).Delete(c)
+	affected, err := database.DB.ID(id).Delete(c)
 	if err != nil {
 		return -1, err
 	}

@@ -12,7 +12,7 @@ import (
 
 // AddCategory handles POST requests and adds a new car product category
 func AddCategory(c *gin.Context) {
-	// parse data from request to category struct, bind JSON
+	// parse database from request to category struct, bind JSON
 	category := new(models.Category)
 	if err := c.BindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -27,9 +27,9 @@ func AddCategory(c *gin.Context) {
 
 	// success response
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "success",
-		"data": category,
+		"code":     200,
+		"msg":      "success",
+		"database": category,
 	})
 }
 
@@ -42,9 +42,9 @@ func ListAll(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "success",
-		"data": categories,
+		"code":     200,
+		"msg":      "success",
+		"database": categories,
 	})
 }
 
@@ -75,16 +75,16 @@ func GetCategoryByID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "success",
-		"data": category,
+		"code":     200,
+		"msg":      "success",
+		"database": category,
 	})
 }
 
 // UpdateCategoryByID handles PATCH requests updates a car product category by id
 func UpdateCategoryByID(c *gin.Context) {
 	category := new(models.Category)
-	// parse data from request body
+	// parse database from request body
 	if err := c.BindJSON(category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -112,9 +112,9 @@ func UpdateCategoryByID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "success",
-		"data": category,
+		"code":     200,
+		"msg":      "success",
+		"database": category,
 	})
 }
 
