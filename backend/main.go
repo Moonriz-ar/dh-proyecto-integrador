@@ -2,25 +2,16 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"proyecto-integrador/database"
 	"proyecto-integrador/routes"
 	"syscall"
 	"time"
 )
 
 func main() {
-	// connect to mysql database
-	if err := database.ConnectDatabase(); nil != err {
-		fmt.Println(err)
-		return
-	}
-	defer database.DB.Close() // program exit close db connection
-
 	// gin router
 	router := routes.SetupRouter()
 

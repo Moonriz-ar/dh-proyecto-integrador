@@ -1,15 +1,19 @@
 build:
 	go build -o bin main.go
-mysql:
-	docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql
+start:
+	./bin/main
+postgres:
+	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 createdb:
-	docker exec -it mysql mysql -u root -ppassword -e "CREATE DATABASE rentcar;"
+	docker exec -it postgres12 createdb --username=root --owner=root rentcar
 dropdb:
-	docker exec -it mysql mysql -u root -ppassword -e "DROP DATABASE rentcar;"
+	docker exec -it postgres12 dropdb rentcar
 accessdb:
-	docker exec -it mysql mysql -u root -ppassword rentcar
+	docker exec -it postgres12 psql -U root rentcar
 migrateup:
-	migrate -path database/migration -database "mysql://root:password@tcp(localhost:3306)/rentcar" -verbose up
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable" -verbose up
 migratedown:
-	migrate -path database/migration -database "mysql://root:password@tcp(localhost:3306)/rentcar" -verbose down
-.PHONY: build mysql createdb dropdb accessdb
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable" -verbose down
+sqlc:
+	sqlc generate
+.PHONY: build mysql createdb dropdb accessdb sqlc
