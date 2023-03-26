@@ -2,6 +2,9 @@ build:
 	go build -o bin main.go
 start:
 	./bin/main
+test: # ./... argument to run unit test in all packages
+	go test -v -cover ./...
+
 postgres:
 	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 createdb:
@@ -16,4 +19,5 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable" -verbose down
 sqlc:
 	sqlc generate
+
 .PHONY: build mysql createdb dropdb accessdb sqlc
