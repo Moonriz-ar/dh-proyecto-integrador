@@ -17,8 +17,10 @@ paths:
           content:
             application/json:
               schema:
-                  type: object
-                  $ref: '#/components/schemas/200Response'
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/CategoryResponse'
     post:
       summary: Create a product category
       tags:
@@ -37,7 +39,7 @@ paths:
               application/json:
                 schema:
                     type: object
-                    $ref: '#/components/schemas/200Response'
+                    $ref: '#/components/schemas/CategoryResponse'
   /category/{id}:
     get:
       summary: Get category with specific id
@@ -58,7 +60,7 @@ paths:
             application/json:
               schema:
                   type: object
-                  $ref: '#/components/schemas/200Response'
+                  $ref: '#/components/schemas/CategoryResponse'
     patch:
       summary: Patch category with specific id
       tags:
@@ -85,7 +87,7 @@ paths:
             application/json:
               schema:
                   type: object
-                  $ref: '#/components/schemas/200Response'
+                  $ref: '#/components/schemas/CategoryResponse'
     delete:
       summary: Delete category with specific id
       tags:
@@ -104,18 +106,6 @@ paths:
           content: {}
 components:
   schemas:
-    200Response:
-      type: object
-      properties:
-        code:
-          type: integer
-          example: 200
-        data:
-          type: object
-          $ref: '#/components/schemas/CategoryResponse'
-        msg:
-          type: string
-          example: success
     CategoryRequest:
       type: object
       properties:
@@ -125,7 +115,7 @@ components:
         description:
           type: string
           example: car to take you on the road
-        imageUrl:
+        image_url:
           type: string
     CategoryResponse:
       type: object
@@ -139,9 +129,9 @@ components:
         description:
           type: string
           example: car to take you on the road
-        imageUrl:
+        image_url:
           type: string
-        createdAt:
+        created_at:
           type: string
           format: date-time
 tags:

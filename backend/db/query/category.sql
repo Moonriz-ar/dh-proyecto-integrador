@@ -19,7 +19,7 @@ INSERT INTO category (
 
 -- name: UpdateCategory :one
 UPDATE category
-SET title = $2, description = $3
+SET title = $2, description = $3, image_url=$4
 WHERE id = $1
 RETURNING *;
 

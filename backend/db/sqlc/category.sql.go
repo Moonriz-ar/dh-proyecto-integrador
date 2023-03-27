@@ -84,7 +84,7 @@ func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) 
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Category
+	items := []Category{}
 	for rows.Next() {
 		var i Category
 		if err := rows.Scan(
@@ -109,7 +109,7 @@ func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) 
 
 const updateCategory = `-- name: UpdateCategory :one
 UPDATE category
-SET title = $2, description = $3
+SET title = $2, description = $3, image_url=$4
 WHERE id = $1
 RETURNING id, title, description, image_url, created_at
 `
@@ -118,10 +118,16 @@ type UpdateCategoryParams struct {
 	ID          int64  `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	ImageUrl    string `json:"image_url"`
 }
 
 func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error) {
-	row := q.db.QueryRowContext(ctx, updateCategory, arg.ID, arg.Title, arg.Description)
+	row := q.db.QueryRowContext(ctx, updateCategory,
+		arg.ID,
+		arg.Title,
+		arg.Description,
+		arg.ImageUrl,
+	)
 	var i Category
 	err := row.Scan(
 		&i.ID,

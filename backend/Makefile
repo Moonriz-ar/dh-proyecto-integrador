@@ -20,4 +20,4 @@ migratedown:
 sqlc:
 	sqlc generate
 
-.PHONY: build mysql createdb dropdb accessdb sqlc
+.PHONY: build start test postgres createdb dropdb accessdb migrateup migratedown sqlc

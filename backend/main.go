@@ -2,23 +2,38 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"proyecto-integrador/routes"
+	"proyecto-integrador/api"
+	db "proyecto-integrador/db/sqlc"
 	"syscall"
 	"time"
+
+	_ "github.com/lib/pq"
+)
+
+const (
+	dbDriver = "postgres"
+	dbSource = "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable"
 )
 
 func main() {
-	// gin router
-	router := routes.SetupRouter()
+	// connect to db
+	conn, err := sql.Open(dbDriver, dbSource)
+	if err != nil {
+		log.Fatal("cannot connect to db:", err)
+	}
+
+	store := db.NewStore(conn)
+	server := api.NewServer(store)
 
 	// service configuration
 	srv := &http.Server{
 		Addr:         ":8080",
-		Handler:      router,
+		Handler:      server.Router,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
