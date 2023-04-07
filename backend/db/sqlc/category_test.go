@@ -40,6 +40,7 @@ func TestUpdateCategory(t *testing.T) {
 		ID:          category1.ID,
 		Title:       util.RandomString(5),
 		Description: util.RandomString(10),
+		ImageUrl:    util.RandomString(5),
 	}
 
 	category2, err := testQueries.UpdateCategory(context.Background(), arg)
@@ -50,7 +51,7 @@ func TestUpdateCategory(t *testing.T) {
 	require.Equal(t, category1.ID, category2.ID)
 	require.Equal(t, arg.Title, category2.Title)
 	require.Equal(t, arg.Description, category2.Description)
-	require.Equal(t, category1.ImageUrl, category2.ImageUrl)
+	require.Equal(t, arg.ImageUrl, category2.ImageUrl)
 	require.WithinDuration(t, category1.CreatedAt, category2.CreatedAt, time.Second)
 }
 
