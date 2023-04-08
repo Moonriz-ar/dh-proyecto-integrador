@@ -9,20 +9,21 @@ import (
 	"os/signal"
 	"proyecto-integrador/api"
 	db "proyecto-integrador/db/sqlc"
+	"proyecto-integrador/util"
 	"syscall"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable"
-)
-
 func main() {
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
+
 	// connect to db
-	conn, err := sql.Open(dbDriver, dbSource)
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
@@ -32,7 +33,7 @@ func main() {
 
 	// service configuration
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         config.ServerAddress,
 		Handler:      server.Router,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
