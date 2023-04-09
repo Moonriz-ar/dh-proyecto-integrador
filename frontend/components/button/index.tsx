@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 type Props = {
   variant?: "outlined" | "contained" | "text";
   children?: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 function Button({ children, variant, onClick }: Props) {
