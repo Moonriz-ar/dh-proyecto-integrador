@@ -1,7 +1,15 @@
+import Button from "@/components/button";
+import Layout from "@/components/layout";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-primary">hi</h1>
-    </main>
+    <Layout>
+      <div>
+        <h1 className="text-primary">hi</h1>
+        <div className="w-36">
+          <Button onClick={() => console.log("button clicked")}>Click</Button>
+        </div>
+      </div>
+    </Layout>
   );
 }

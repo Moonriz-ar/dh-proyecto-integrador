@@ -1,0 +1,26 @@
+.button {
+  border-radius: 4px;
+  padding: 3px 12px;
+  text-transform: uppercase;
+  font-size: small;
+  font-weight: bold;
+  width: 100%;
+  max-width: 400px;
+}
+
+.contained {
+  color: white;
+  background-color: var(--primary);
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+    drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}
+
+.outlined {
+  color: var(--primary);
+  border-color: var(--primary);
+  border-width: 1px;
+}
+
+.text {
+  color: var(--primary);
+}
