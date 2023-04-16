@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
+import { setUser } from "@/store";
+
 import Button from "@/components/button";
 
 type Inputs = {
@@ -23,6 +25,11 @@ function Signup() {
 
   const onSubmit = (data: Inputs) => {
     console.log(data);
+    setUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    });
     router.push("/");
   };
 

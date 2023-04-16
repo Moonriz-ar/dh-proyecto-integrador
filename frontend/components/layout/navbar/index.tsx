@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
-
 import Image from "next/image";
 import Link from "next/link";
+
+import { store, useSnapshot } from "@/store";
 
 import Button from "@/components/button";
 import User from "@/components/layout/user";
@@ -12,7 +13,7 @@ type Props = {
 
 function Navbar({ toogleDrawer }: Props) {
   const router = useRouter();
-  const user = null;
+  const { user } = useSnapshot(store);
 
   console.log(router.asPath);
   const onClickHamburger = () => {

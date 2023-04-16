@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { store, useSnapshot, setUser } from "@/store";
+
 import Button from "@/components/button";
 import Social from "../social";
 import User from "../user";
@@ -9,13 +11,18 @@ type Props = {
 };
 
 function Drawer({ toogleDrawer }: Props) {
-  const user = null;
+  const { user } = useSnapshot(store);
 
   const onClickLink = () => {
     toogleDrawer();
   };
 
   const onClose = () => {
+    toogleDrawer();
+  };
+
+  const onLogout = () => {
+    setUser(null);
     toogleDrawer();
   };
 
@@ -46,7 +53,9 @@ function Drawer({ toogleDrawer }: Props) {
           <p>
             Deseas{" "}
             <span className="inline-block">
-              <Button variant="text">cerrar sesión</Button>
+              <Button variant="text" onClick={onLogout}>
+                cerrar sesión
+              </Button>
             </span>
             ?
           </p>

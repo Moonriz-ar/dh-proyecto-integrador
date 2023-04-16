@@ -1,3 +1,5 @@
+import { setUser } from "@/store";
+
 type Props = {
   user: {
     firstName: string;
@@ -6,7 +8,13 @@ type Props = {
 };
 
 function User({ user }: Props) {
-  const initials = user.firstName.slice(0, 1) + user.lastName.slice(0, 1);
+  const initials =
+    user.firstName.slice(0, 1).toUpperCase() +
+    user.lastName.slice(0, 1).toUpperCase();
+
+  const onLogout = () => {
+    setUser(null);
+  };
 
   return (
     <section className="flex flex-col items-end md:flex-row md:gap-2 md:items-center">
@@ -16,9 +24,12 @@ function User({ user }: Props) {
       <div className="relative flex flex-col items-end md:items-start">
         <p className="text-sm">Hola, </p>
         <p className="text-sm font-bold text-secondary md:text-primary">{`${user.firstName} ${user.lastName}`}</p>
-        <p className="absolute right-0 hidden font-bold -top-2 w-min h-min md:block">
+        <button
+          className="absolute right-0 hidden font-bold -top-2 w-min h-min md:block"
+          onClick={onLogout}
+        >
           x
-        </p>
+        </button>
       </div>
     </section>
   );
