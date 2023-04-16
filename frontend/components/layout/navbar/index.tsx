@@ -12,10 +12,7 @@ type Props = {
 
 function Navbar({ toogleDrawer }: Props) {
   const router = useRouter();
-  const user = {
-    firstName: "Andrea",
-    lastName: "Lin",
-  };
+  const user = null;
 
   console.log(router.asPath);
   const onClickHamburger = () => {
@@ -52,7 +49,7 @@ function Navbar({ toogleDrawer }: Props) {
           </>
         ) : (
           <div className="hidden md:block">
-            <User firstName={user.firstName} lastName={user.lastName} />
+            <User user={user} />
           </div>
         )}
         <button onClick={onClickHamburger} className="md:hidden">

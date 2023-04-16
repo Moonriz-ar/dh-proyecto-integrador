@@ -1,10 +1,12 @@
 type Props = {
-  firstName: string;
-  lastName: string;
+  user: {
+    firstName: string;
+    lastName: string;
+  };
 };
 
-function User({ firstName, lastName }: Props) {
-  const initials = firstName.slice(0, 1) + lastName.slice(0, 1);
+function User({ user }: Props) {
+  const initials = user.firstName.slice(0, 1) + user.lastName.slice(0, 1);
 
   return (
     <section className="flex flex-col items-end md:flex-row md:gap-2 md:items-center">
@@ -13,7 +15,7 @@ function User({ firstName, lastName }: Props) {
       </div>
       <div className="relative flex flex-col items-end md:items-start">
         <p className="text-sm">Hola, </p>
-        <p className="text-sm font-bold text-secondary md:text-primary">{`${firstName} ${lastName}`}</p>
+        <p className="text-sm font-bold text-secondary md:text-primary">{`${user.firstName} ${user.lastName}`}</p>
         <p className="absolute right-0 hidden font-bold -top-2 w-min h-min md:block">
           x
         </p>

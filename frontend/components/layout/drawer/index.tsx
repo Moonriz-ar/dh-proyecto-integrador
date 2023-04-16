@@ -9,10 +9,7 @@ type Props = {
 };
 
 function Drawer({ toogleDrawer }: Props) {
-  const user = {
-    firstName: "Andrea",
-    lastName: "Lin",
-  };
+  const user = null;
 
   const onClickLink = () => {
     toogleDrawer();
@@ -31,11 +28,7 @@ function Drawer({ toogleDrawer }: Props) {
         >
           x
         </span>
-        {!user ? (
-          <h2>MENÚ</h2>
-        ) : (
-          <User firstName={user.firstName} lastName={user.lastName} />
-        )}
+        {!user ? <h2>MENÚ</h2> : <User user={user} />}
       </header>
 
       {!user ? (

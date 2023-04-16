@@ -1,7 +1,8 @@
-import Button from "@/components/button";
+import { useRouter } from "next/router";
 import Link from "next/link";
-
 import { useForm } from "react-hook-form";
+
+import Button from "@/components/button";
 
 type Inputs = {
   firstName: string;
@@ -12,6 +13,7 @@ type Inputs = {
 };
 
 function Signup() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -19,7 +21,10 @@ function Signup() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit = (data: Inputs) => console.log(data);
+  const onSubmit = (data: Inputs) => {
+    console.log(data);
+    router.push("/");
+  };
 
   return (
     <section className="flex flex-col justify-center md:h-full md:max-w-sm md:mx-auto">
