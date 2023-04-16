@@ -33,11 +33,11 @@ function Drawer({ toogleDrawer }: Props) {
 
       {!user ? (
         <section className="flex flex-col gap-2 p-5 text-right text-secondary grow shrink-0 basis-0">
-          <Link href="" onClick={onClickLink}>
+          <Link href="/signup" onClick={onClickLink}>
             <h3>Crear cuenta</h3>
           </Link>
           <hr />
-          <Link href="" onClick={onClickLink}>
+          <Link href="/login" onClick={onClickLink}>
             <h3>Iniciar sesión</h3>
           </Link>
         </section>
