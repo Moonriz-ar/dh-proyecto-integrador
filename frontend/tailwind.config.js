@@ -42,7 +42,7 @@ module.exports = {
           200: "#FFFFFF",
           300: "#FFFFFF",
           400: "#FFFFFF",
-          500: "#F3F1ED",
+          500: "#f9f9f9",
           600: "#DDD7CB",
           700: "#C6BDAA",
           800: "#B0A288",

@@ -16,7 +16,7 @@ function Layout({ children }: Props) {
   };
 
   return (
-    <div className="relative flex flex-col h-full min-h-screen">
+    <div className="relative flex flex-col h-full min-h-screen bg-ivory-500">
       <Navbar toogleDrawer={toogleDrawer} />
       <section className="px-5 pt-20 pb-2 grow shrink-0 basis-0">
         {children}
