@@ -8,11 +8,6 @@ type Inputs = {
   password: string;
 };
 
-type FormValues = {
-  email: string;
-  password: string;
-};
-
 function Login() {
   const {
     register,
@@ -20,11 +15,11 @@ function Login() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit = (data: FormValues) => console.log(data);
+  const onSubmit = (data: Inputs) => console.log(data);
 
   return (
     <section className="flex flex-col justify-center md:h-full md:max-w-sm md:mx-auto">
-      <h1 className="mb-10 text-2xl font-bold text-center text-primary">
+      <h1 className="mb-5 text-2xl font-bold text-center text-primary">
         Iniciar sesión
       </h1>
       <form
