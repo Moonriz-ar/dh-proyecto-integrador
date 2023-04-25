@@ -19,5 +19,7 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/rentcar?sslmode=disable" -verbose down
 sqlc:
 	sqlc generate
+mockgen:
+	mockgen -package mockdb -destination db/mock/store.go proyecto-integrador/db/sqlc Store
 
-.PHONY: build start test postgres createdb dropdb accessdb migrateup migratedown sqlc
+.PHONY: build start test postgres createdb dropdb accessdb migrateup migratedown sqlc mockgen

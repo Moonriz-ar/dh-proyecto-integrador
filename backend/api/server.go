@@ -7,14 +7,14 @@ import (
 )
 
 type Server struct {
-	Store  *db.Store
-	Router *gin.Engine
+	Store  db.Store
+	router *gin.Engine
 }
 
-func NewServer(store *db.Store) *Server {
+func NewServer(store db.Store) *Server {
 	server := &Server{
 		Store:  store,
-		Router: gin.Default(),
+		router: gin.Default(),
 	}
 
 	// register routes to router
@@ -28,7 +28,7 @@ func errorResponse(err error) gin.H {
 }
 
 func registerCategoryRoutes(server *Server) {
-	category := server.Router.Group("/category")
+	category := server.router.Group("/category")
 	{
 		category.POST("/", server.createCategory)
 		category.GET("/", server.listCategory)
