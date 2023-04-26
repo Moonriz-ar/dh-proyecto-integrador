@@ -93,7 +93,7 @@ func TestGetCategoryByID(t *testing.T) {
 			require.NoError(t, err)
 
 			// send our API request through the server router and record its response in the recorder, then all we need to do is to check that response
-			server.router.ServeHTTP(recorder, request)
+			server.Router.ServeHTTP(recorder, request)
 			tc.checkResponse(t, recorder)
 		})
 	}

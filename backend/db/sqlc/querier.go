@@ -10,9 +10,12 @@ import (
 
 type Querier interface {
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
+	CreateCity(ctx context.Context, name string) (City, error)
 	DeleteCategory(ctx context.Context, id int64) error
 	GetCategory(ctx context.Context, id int64) (Category, error)
+	GetCity(ctx context.Context, id int64) (City, error)
 	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error)
+	ListCities(ctx context.Context, arg ListCitiesParams) ([]City, error)
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error)
 }
 

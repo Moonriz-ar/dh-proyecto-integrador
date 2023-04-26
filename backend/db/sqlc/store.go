@@ -8,7 +8,6 @@ import (
 
 // Store provides all functions to execute db queries and transactions
 type Store interface {
-	// TODO: add functions to this interface
 	Querier
 }
 

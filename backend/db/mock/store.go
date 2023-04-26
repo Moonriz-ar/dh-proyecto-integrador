@@ -50,6 +50,21 @@ func (mr *MockStoreMockRecorder) CreateCategory(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCategory", reflect.TypeOf((*MockStore)(nil).CreateCategory), arg0, arg1)
 }
 
+// CreateCity mocks base method.
+func (m *MockStore) CreateCity(arg0 context.Context, arg1 string) (db.City, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCity", arg0, arg1)
+	ret0, _ := ret[0].(db.City)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCity indicates an expected call of CreateCity.
+func (mr *MockStoreMockRecorder) CreateCity(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCity", reflect.TypeOf((*MockStore)(nil).CreateCity), arg0, arg1)
+}
+
 // DeleteCategory mocks base method.
 func (m *MockStore) DeleteCategory(arg0 context.Context, arg1 int64) error {
 	m.ctrl.T.Helper()
@@ -79,6 +94,21 @@ func (mr *MockStoreMockRecorder) GetCategory(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategory", reflect.TypeOf((*MockStore)(nil).GetCategory), arg0, arg1)
 }
 
+// GetCity mocks base method.
+func (m *MockStore) GetCity(arg0 context.Context, arg1 int64) (db.City, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCity", arg0, arg1)
+	ret0, _ := ret[0].(db.City)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCity indicates an expected call of GetCity.
+func (mr *MockStoreMockRecorder) GetCity(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCity", reflect.TypeOf((*MockStore)(nil).GetCity), arg0, arg1)
+}
+
 // ListCategories mocks base method.
 func (m *MockStore) ListCategories(arg0 context.Context, arg1 db.ListCategoriesParams) ([]db.Category, error) {
 	m.ctrl.T.Helper()
@@ -92,6 +122,21 @@ func (m *MockStore) ListCategories(arg0 context.Context, arg1 db.ListCategoriesP
 func (mr *MockStoreMockRecorder) ListCategories(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCategories", reflect.TypeOf((*MockStore)(nil).ListCategories), arg0, arg1)
+}
+
+// ListCities mocks base method.
+func (m *MockStore) ListCities(arg0 context.Context, arg1 db.ListCitiesParams) ([]db.City, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListCities", arg0, arg1)
+	ret0, _ := ret[0].([]db.City)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListCities indicates an expected call of ListCities.
+func (mr *MockStoreMockRecorder) ListCities(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCities", reflect.TypeOf((*MockStore)(nil).ListCities), arg0, arg1)
 }
 
 // UpdateCategory mocks base method.
