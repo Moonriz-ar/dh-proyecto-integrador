@@ -29,7 +29,7 @@ func (server *Server) createCity(c *gin.Context) {
 		return
 	}
 
-	city, err := server.Store.CreateCity(c, req.Name)
+	city, err := server.store.CreateCity(c, req.Name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -45,7 +45,7 @@ func (server *Server) getCityByID(c *gin.Context) {
 		return
 	}
 
-	city, err := server.Store.GetCity(c, req.ID)
+	city, err := server.store.GetCity(c, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, errorResponse(err))
@@ -71,7 +71,7 @@ func (server *Server) listCity(c *gin.Context) {
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	cities, err := server.Store.ListCities(c, arg)
+	cities, err := server.store.ListCities(c, arg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

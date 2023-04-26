@@ -50,7 +50,7 @@ func (server *Server) createCategory(c *gin.Context) {
 		ImageUrl:    req.ImageUrl,
 	}
 
-	category, err := server.Store.CreateCategory(c, arg)
+	category, err := server.store.CreateCategory(c, arg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -66,7 +66,7 @@ func (server *Server) getCategoryByID(c *gin.Context) {
 		return
 	}
 
-	category, err := server.Store.GetCategory(c, req.ID)
+	category, err := server.store.GetCategory(c, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, errorResponse(err))
@@ -91,7 +91,7 @@ func (server *Server) listCategory(c *gin.Context) {
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	categories, err := server.Store.ListCategories(c, arg)
+	categories, err := server.store.ListCategories(c, arg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -119,7 +119,7 @@ func (server *Server) updateCategoryByID(c *gin.Context) {
 		ImageUrl:    reqBody.ImageUrl,
 	}
 
-	category, err := server.Store.UpdateCategory(c, arg)
+	category, err := server.store.UpdateCategory(c, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, errorResponse(err))
@@ -139,7 +139,7 @@ func (server *Server) deleteCategoryByID(c *gin.Context) {
 		return
 	}
 
-	err := server.Store.DeleteCategory(c, req.ID)
+	err := server.store.DeleteCategory(c, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, errorResponse(err))

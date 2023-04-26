@@ -7,19 +7,18 @@ import (
 )
 
 type Server struct {
-	Store  db.Store
+	store  db.Store
 	Router *gin.Engine
 }
 
 func NewServer(store db.Store) *Server {
 	server := &Server{
-		Store:  store,
+		store:  store,
 		Router: gin.Default(),
 	}
 
 	// register routes to router
-	registerCategoryRoutes(server)
-	registerCityRoutes(server)
+	server.registerRoutes()
 
 	return server
 }
@@ -28,22 +27,14 @@ func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
 
-func registerCategoryRoutes(server *Server) {
-	category := server.Router.Group("/category")
-	{
-		category.POST("/", server.createCategory)
-		category.GET("/", server.listCategory)
-		category.GET("/:id", server.getCategoryByID)
-		category.PATCH("/:id", server.updateCategoryByID)
-		category.DELETE("/:id", server.deleteCategoryByID)
-	}
-}
+func (server *Server) registerRoutes() {
+		server.Router.POST("/category", server.createCategory)
+		server.Router.GET("/category", server.listCategory)
+		server.Router.GET("/category/:id", server.getCategoryByID)
+		server.Router.PATCH("/category/:id", server.updateCategoryByID)
+		server.Router.DELETE("/category/:id", server.deleteCategoryByID)
 
-func registerCityRoutes(server *Server) {
-	city := server.Router.Group("/city")
-	{
-		city.POST("/", server.createCity)
-		city.GET("/", server.listCity)
-		city.GET(":id", server.getCityByID)
+		server.Router.POST("/city", server.createCity)
+		server.Router.GET("/city", server.listCity)
+		server.Router.GET("/city/:id", server.getCityByID)
 	}
-}
