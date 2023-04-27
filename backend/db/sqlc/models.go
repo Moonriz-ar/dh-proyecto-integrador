@@ -5,7 +5,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -46,12 +45,12 @@ type Policy struct {
 }
 
 type Product struct {
-	ID          int64         `json:"id"`
-	Title       string        `json:"title"`
-	Description string        `json:"description"`
-	CategoryID  sql.NullInt64 `json:"category_id"`
-	CityID      sql.NullInt64 `json:"city_id"`
-	CreatedAt   time.Time     `json:"created_at"`
+	ID          int64     `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	CategoryID  int64     `json:"category_id"`
+	CityID      int64     `json:"city_id"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type ProductCharacteristic struct {

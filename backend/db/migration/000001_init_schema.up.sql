@@ -38,8 +38,8 @@ CREATE TABLE "product" (
   "id" bigserial PRIMARY KEY,
   "title" varchar NOT NULL,
   "description" varchar NOT NULL,
-  "category_id" bigint,
-  "city_id" bigint,
+  "category_id" bigint NOT NULL,
+  "city_id" bigint NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 

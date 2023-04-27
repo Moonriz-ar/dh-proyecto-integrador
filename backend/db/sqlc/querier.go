@@ -11,12 +11,17 @@ import (
 type Querier interface {
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
 	CreateCity(ctx context.Context, name string) (City, error)
+	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
 	DeleteCategory(ctx context.Context, id int64) error
+	DeleteProduct(ctx context.Context, id int64) error
 	GetCategory(ctx context.Context, id int64) (Category, error)
 	GetCity(ctx context.Context, id int64) (City, error)
+	GetProduct(ctx context.Context, id int64) (Product, error)
 	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error)
 	ListCities(ctx context.Context, arg ListCitiesParams) ([]City, error)
+	ListProduct(ctx context.Context, arg ListProductParams) ([]Product, error)
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error)
+	UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error)
 }
 
 var _ Querier = (*Queries)(nil)
