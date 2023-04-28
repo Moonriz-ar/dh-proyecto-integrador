@@ -1,5 +1,5 @@
 build:
-	go build -o bin main.go
+	if [ ! -d "bin" ]; then mkdir -p bin; fi && go build -o bin main.go
 start:
 	./bin/main
 test: # ./... argument to run unit test in all packages
