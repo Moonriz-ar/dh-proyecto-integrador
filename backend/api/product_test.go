@@ -20,50 +20,54 @@ import (
 )
 
 func TestCreateProduct(t *testing.T) {
-	product := randomProduct()
+	category := randomCategory()
+	city := randomCity()
+	product := randomProduct(category, city)
 
-	testCases := []struct{
-		name string
-		body gin.H
-		buildStubs func(store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		body          gin.H
+		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
 			name: "OK",
-			body: gin.H {
-				"title": product.Title,
+			body: gin.H{
+				"title":       product.Title,
 				"description": product.Description,
 				"category_id": product.CategoryID,
-				"city_id": product.CityID,
+				"city_id":     product.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.CreateProductParams{
-					Title: product.Title,
+					Title:       product.Title,
 					Description: product.Description,
-					CategoryID: product.CategoryID,
-					CityID: product.CityID,
+					CategoryID:  product.CategoryID,
+					CityID:      product.CityID,
 				}
 				store.EXPECT().CreateProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(product, nil)
+				store.EXPECT().GetCategory(gomock.Any(), gomock.Eq(product.CategoryID)).Times(1).Return(category, nil)
+				store.EXPECT().GetCity(gomock.Any(), gomock.Eq(product.CityID)).Times(1).Return(city, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
-				requireBodyMatchProduct(t, recorder.Body, product)
+				requireBodyMatchProduct(t, recorder.Body, product, category, city)
 			},
 		},
 		{
 			name: "InternalError",
 			body: gin.H{
-				"title": product.Title,
+				"title":       product.Title,
 				"description": product.Description,
 				"category_id": product.CategoryID,
-				"city_id": product.CityID,
+				"city_id":     product.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.CreateProductParams{
-					Title: product.Title,
+					Title:       product.Title,
 					Description: product.Description,
-					CategoryID: product.CategoryID,
-					CityID: product.CityID,
+					CategoryID:  product.CategoryID,
+					CityID:      product.CityID,
 				}
 				store.EXPECT().CreateProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(db.Product{}, sql.ErrConnDone)
 			},
@@ -74,9 +78,9 @@ func TestCreateProduct(t *testing.T) {
 		{
 			name: "InvalidRequestBody",
 			body: gin.H{
-				"title": product.Title,
+				"title":       product.Title,
 				"category_id": product.CategoryID,
-				"city_id": product.CityID,
+				"city_id":     product.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().CreateProduct(gomock.Any(), gomock.Any()).Times(0)
@@ -113,27 +117,31 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestGetProductByID(t *testing.T) {
-	product := randomProduct()
+	category := randomCategory()
+	city := randomCity()
+	product := randomProduct(category, city)
 
-	testCases := []struct{
-		name string
-		productID int64
-		buildStubs func(store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		productID     int64
+		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name:      "OK",
 			productID: product.ID,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().GetProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(product, nil)
+				store.EXPECT().GetCategory(gomock.Any(), gomock.Eq(product.CategoryID)).Times(1).Return(category, nil)
+				store.EXPECT().GetCity(gomock.Any(), gomock.Eq(product.CityID)).Times(1).Return(city, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
-				requireBodyMatchProduct(t, recorder.Body, product)
+				requireBodyMatchProduct(t, recorder.Body, product, category, city)
 			},
 		},
 		{
-			name: "NotFound",
+			name:      "NotFound",
 			productID: product.ID,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().GetProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(db.Product{}, sql.ErrNoRows)
@@ -143,9 +151,9 @@ func TestGetProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InternalError",
+			name:      "InternalError",
 			productID: product.ID,
-			buildStubs: func(store *mockdb.MockStore){
+			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().GetProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(db.Product{}, sql.ErrConnDone)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -153,7 +161,7 @@ func TestGetProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InvalidID",
+			name:      "InvalidID",
 			productID: -1,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().GetProduct(gomock.Any(), gomock.Any()).Times(0)
@@ -164,7 +172,7 @@ func TestGetProductByID(t *testing.T) {
 		},
 	}
 
-	for i := range testCases{
+	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
@@ -188,44 +196,59 @@ func TestGetProductByID(t *testing.T) {
 
 func TestListProduct(t *testing.T) {
 	n := 5
-	products := make([]db.Product, n)
+	productsDB := make([]db.Product, n)
+	productsResponse := make([]productResponse, n)
 	for i := 0; i < n; i++ {
-		products[i] = randomProduct()
+		category := randomCategory()
+		city := randomCity()
+		productsDB[i] = randomProduct(category, city)
+		productsResponse[i] = productResponse{
+			ID:          productsDB[i].ID,
+			Title:       productsDB[i].Title,
+			Description: productsDB[i].Description,
+			Category:    category,
+			City:        city,
+			CreatedAt:   productsDB[i].CreatedAt,
+		}
 	}
 
-	testCases := []struct{
-		name string
-		query listProductRequest
-		buildStubs func(store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		query         listProductRequest
+		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
 			name: "OK",
 			query: listProductRequest{
-				PageID: 1,
+				PageID:   1,
 				PageSize: int32(n),
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.ListProductParams{
-					Limit: int32(n),
+					Limit:  int32(n),
 					Offset: 0,
 				}
-				store.EXPECT().ListProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(products, nil)
+				store.EXPECT().ListProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(productsDB, nil)
+				for i, product := range productsDB {
+					store.EXPECT().GetCategory(gomock.Any(), gomock.Eq(product.CategoryID)).Times(1).Return(productsResponse[i].Category, nil)
+					store.EXPECT().GetCity(gomock.Any(), gomock.Eq(product.CityID)).Times(1).Return(productsResponse[i].City, nil)
+				}
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
-				requireBodyMatchProducts(t, recorder.Body, products)
+				requireBodyMatchProducts(t, recorder.Body, productsResponse)
 			},
 		},
 		{
 			name: "InternalError",
 			query: listProductRequest{
-				PageID: 1,
+				PageID:   1,
 				PageSize: int32(n),
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.ListProductParams{
-					Limit: int32(n),
+					Limit:  int32(n),
 					Offset: 0,
 				}
 				store.EXPECT().ListProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return([]db.Product{}, sql.ErrConnDone)
@@ -237,20 +260,20 @@ func TestListProduct(t *testing.T) {
 		{
 			name: "InvalidPageID",
 			query: listProductRequest{
-				PageID: -1,
+				PageID:   -1,
 				PageSize: int32(n),
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().ListProduct(gomock.Any(), gomock.Any()).Times(0)
 			},
-			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder){
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
 			},
 		},
 		{
 			name: "InvalidPageSize",
 			query: listProductRequest{
-				PageID: 1,
+				PageID:   1,
 				PageSize: 50,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -291,56 +314,63 @@ func TestListProduct(t *testing.T) {
 }
 
 func TestUpdateProductByID(t *testing.T) {
-	product1 := randomProduct()
-	product2 := randomProduct()
+	category1 := randomCategory()
+	city1 := randomCity()
+	product1 := randomProduct(category1, city1)
+
+	category2 := randomCategory()
+	city2 := randomCity()
+	product2 := randomProduct(category2, city2)
 
 	testCases := []struct {
-		name string
-		productID int64
-		body gin.H
-		buildStubs func(store *mockdb.MockStore)
+		name          string
+		productID     int64
+		body          gin.H
+		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name:      "OK",
 			productID: product1.ID,
 			body: gin.H{
-				"title": product2.Title,
+				"title":       product2.Title,
 				"description": product2.Description,
 				"category_id": product2.CategoryID,
-				"city_id": product2.CityID,
+				"city_id":     product2.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.UpdateProductParams{
-					ID: product1.ID,
-					Title: product2.Title,
+					ID:          product1.ID,
+					Title:       product2.Title,
 					Description: product2.Description,
-					CategoryID: product2.CategoryID,
-					CityID: product2.CityID,
+					CategoryID:  product2.CategoryID,
+					CityID:      product2.CityID,
 				}
 				store.EXPECT().UpdateProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(product2, nil)
+				store.EXPECT().GetCategory(gomock.Any(), gomock.Eq(product2.CategoryID)).Times(1).Return(category2, nil)
+				store.EXPECT().GetCity(gomock.Any(), gomock.Eq(product2.CityID)).Times(1).Return(city2, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
-				requireBodyMatchProduct(t, recorder.Body, product2)
+				requireBodyMatchProduct(t, recorder.Body, product2, category2, city2)
 			},
 		},
 		{
-			name: "InternalError",
+			name:      "InternalError",
 			productID: product1.ID,
-			body: gin.H {
-				"title": product2.Title,
+			body: gin.H{
+				"title":       product2.Title,
 				"description": product2.Description,
 				"category_id": product2.CategoryID,
-				"city_id": product2.CityID,
+				"city_id":     product2.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.UpdateProductParams{
-					ID: product1.ID,
-					Title: product2.Title,
+					ID:          product1.ID,
+					Title:       product2.Title,
 					Description: product2.Description,
-					CategoryID: product2.CategoryID,
-					CityID: product2.CityID,
+					CategoryID:  product2.CategoryID,
+					CityID:      product2.CityID,
 				}
 				store.EXPECT().UpdateProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(db.Product{}, sql.ErrConnDone)
 			},
@@ -349,21 +379,21 @@ func TestUpdateProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "NotFound",
+			name:      "NotFound",
 			productID: product1.ID,
-			body: gin.H {
-				"title": product2.Title,
+			body: gin.H{
+				"title":       product2.Title,
 				"description": product2.Description,
 				"category_id": product2.CategoryID,
-				"city_id": product2.CityID,
+				"city_id":     product2.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.UpdateProductParams{
-					ID: product1.ID,
-					Title: product2.Title,
+					ID:          product1.ID,
+					Title:       product2.Title,
 					Description: product2.Description,
-					CategoryID: product2.CategoryID,
-					CityID: product2.CityID,
+					CategoryID:  product2.CategoryID,
+					CityID:      product2.CityID,
 				}
 				store.EXPECT().UpdateProduct(gomock.Any(), gomock.Eq(arg)).Times(1).Return(db.Product{}, sql.ErrNoRows)
 			},
@@ -372,13 +402,13 @@ func TestUpdateProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InvalidID",
+			name:      "InvalidID",
 			productID: -1,
-			body: gin.H {
-				"title": product2.Title,
+			body: gin.H{
+				"title":       product2.Title,
 				"description": product2.Description,
 				"category_id": product2.CategoryID,
-				"city_id": product2.CityID,
+				"city_id":     product2.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().UpdateProduct(gomock.Any(), gomock.Any()).Times(0)
@@ -388,10 +418,10 @@ func TestUpdateProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InvalidBody",
+			name:      "InvalidBody",
 			productID: product1.ID,
-			body: gin.H {
-				"title": product2.Title,
+			body: gin.H{
+				"title":   product2.Title,
 				"city_id": product2.CityID,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -429,16 +459,18 @@ func TestUpdateProductByID(t *testing.T) {
 }
 
 func TestDeleteProductByID(t *testing.T) {
-	product := randomProduct()
+	category := randomCategory()
+	city := randomCity()
+	product := randomProduct(category, city)
 
-	testCases := []struct{
-		name string
-		productID int64
-		buildStubs func(store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		productID     int64
+		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "OK",
+			name:      "OK",
 			productID: product.ID,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().DeleteProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(nil)
@@ -448,7 +480,7 @@ func TestDeleteProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InternalError",
+			name:      "InternalError",
 			productID: product.ID,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().DeleteProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(sql.ErrConnDone)
@@ -458,7 +490,7 @@ func TestDeleteProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "NotFound",
+			name:      "NotFound",
 			productID: product.ID,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().DeleteProduct(gomock.Any(), gomock.Eq(product.ID)).Times(1).Return(sql.ErrNoRows)
@@ -468,7 +500,7 @@ func TestDeleteProductByID(t *testing.T) {
 			},
 		},
 		{
-			name: "InvalidID",
+			name:      "InvalidID",
 			productID: 0,
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().DeleteProduct(gomock.Any(), gomock.Any()).Times(0)
@@ -501,33 +533,46 @@ func TestDeleteProductByID(t *testing.T) {
 	}
 }
 
-func randomProduct() db.Product {
+func randomProduct(category db.Category, city db.City) db.Product {
 	return db.Product{
-		ID: util.RandomInt(1, 1000),
-		Title: util.RandomString(20),
+		ID:          util.RandomInt(1, 1000),
+		Title:       util.RandomString(20),
 		Description: util.RandomString(30),
-		CategoryID: util.RandomInt(1, 6),
-		CityID: util.RandomInt(1,30),
-		CreatedAt: time.Date(2023, time.April, 25, 11, 0, 0, 0, time.UTC),
+		CategoryID:  category.ID,
+		CityID:      city.ID,
+		CreatedAt:   time.Date(2023, time.April, 25, 11, 0, 0, 0, time.UTC),
 	}
 }
 
-func requireBodyMatchProduct(t *testing.T, body *bytes.Buffer, product db.Product) {
+func requireBodyMatchProduct(t *testing.T, body *bytes.Buffer, product db.Product, category db.Category, city db.City) {
 	data, err := io.ReadAll(body)
 	require.NoError(t, err)
 
-	var gotProduct db.Product
-	err = json.Unmarshal(data, &gotProduct)
+	var got productResponse
+	err = json.Unmarshal(data, &got)
 	require.NoError(t, err)
-	require.Equal(t, product, gotProduct)
+
+	want := productResponse{
+		ID:          product.ID,
+		Title:       product.Title,
+		Description: product.Description,
+		Category:    category,
+		City:        city,
+		CreatedAt:   product.CreatedAt,
+	}
+
+	require.Equal(t, want, got)
 }
 
-func requireBodyMatchProducts(t *testing.T, body *bytes.Buffer, products []db.Product) {
+func requireBodyMatchProducts(t *testing.T, body *bytes.Buffer, products []productResponse) {
 	data, err := io.ReadAll(body)
 	require.NoError(t, err)
 
-	var gotProducts []db.Product
-	err = json.Unmarshal(data, &gotProducts)
+	var got []productResponse
+	err = json.Unmarshal(data, &got)
 	require.NoError(t, err)
-	require.Equal(t, products, gotProducts)
+
+	want := products
+
+	require.Equal(t, want, got)
 }
